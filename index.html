@@ -12,7 +12,7 @@
         :root {
             --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
             --card-bg: rgba(255, 255, 255, 0.9);
-            --primary: #d63384; /* Deep Pink */
+            --primary: #d63384;
             --primary-soft: #ff8fa3;
             --text-main: #4a4a4a;
             --text-light: #777;
@@ -26,28 +26,21 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             font-family: 'Cairo', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            margin: 0; padding: 0; overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
         /* Header */
         header {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             padding: 10px 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
         }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
         h1 { 
             margin: 0; font-family: 'Dancing Script', cursive; font-size: 1.8rem; 
@@ -64,13 +57,23 @@
             background: white; padding: 10px 20px; border-radius: 50px;
             box-shadow: var(--shadow); margin-top: 5px;
         }
-        .score-box { text-align: center; width: 40%; position: relative; }
-        .score-box.active-turn::after {
-            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-            width: 30px; height: 3px; background: var(--primary); border-radius: 2px;
+        .score-box { 
+            text-align: center; width: 40%; position: relative; cursor: pointer; transition: 0.3s; 
+            padding: 5px; border-radius: 15px;
         }
-        .score-val { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
-        .score-label { font-size: 0.8rem; color: var(--text-light); }
+        .score-box:active { background-color: #f0f0f0; }
+        
+        /* Turn Indicator */
+        .score-box.active-turn::after {
+            content: 'الدور عليك'; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+            font-size: 0.7rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px;
+            white-space: nowrap; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .score-box.active-turn .score-val { color: var(--primary); transform: scale(1.1); }
+        .score-box .score-val { transition: 0.3s; color: #ccc; }
+
+        .score-val { font-size: 1.4rem; font-weight: 800; }
+        .score-label { font-size: 0.8rem; color: var(--text-light); font-weight: bold; }
 
         /* Safe Mode Switch */
         .safe-switch { position: relative; width: 46px; height: 24px; }
@@ -147,6 +150,7 @@
             margin-top: 25px; width: 85%; transition: transform 0.2s;
         }
         .action-btn:active { transform: scale(0.96); }
+        .action-btn:disabled { opacity: 0.7; cursor: not-allowed; filter: grayscale(1); }
         
         .action-row { display: flex; gap: 15px; width: 90%; margin: 20px auto 0; }
         .action-row .action-btn { width: 50%; margin-top: 0; font-size: 1rem; }
@@ -174,7 +178,7 @@
             width: 5px; height: 5px; background: var(--primary); border-radius: 50%;
         }
 
-        /* Modal (Instructions) */
+        /* Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
@@ -189,11 +193,12 @@
         .modal-title { font-weight: bold; color: var(--primary); font-size: 1.2rem; }
         .close-btn { background: #eee; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .rule-block { margin-bottom: 15px; }
-        .rule-title { font-weight: bold; color: #333; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .rule-title { font-weight: bold; color: #333; margin-bottom: 5px; }
         .rule-desc { color: #666; font-size: 0.9rem; line-height: 1.6; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popIn { from { transform: translateX(-50%) scale(0); } to { transform: translateX(-50%) scale(1); } }
         .shake { animation: shake 0.5s; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px) rotate(-5deg);} 75% {transform: translateX(5px) rotate(5deg);} }
 
@@ -214,23 +219,25 @@
         </div>
         
         <div class="scoreboard">
-            <div class="score-box active-turn">
+            <div class="score-box active-turn" id="box-p1" onclick="manualAdd(1)">
                 <div class="score-val" id="score1">0</div>
-                <div class="score-label">ADAM</div>
+                <div class="score-label">AHMED</div>
             </div>
-            <div style="font-size: 1.5rem; color: #eee;">vs</div>
-            <div class="score-box">
+            
+            <div style="font-size: 1.2rem; color: #ddd;">vs</div>
+            
+            <div class="score-box" id="box-p2" onclick="manualAdd(2)">
                 <div class="score-val" id="score2">0</div>
                 <div class="score-label">LULU</div>
             </div>
         </div>
-        <div id="reward-msg" style="text-align:center; color: var(--gold); font-size: 0.85rem; margin-top:8px; height: 20px; font-weight:600;"></div>
+        <div id="reward-msg" style="text-align:center; color: var(--gold); font-size: 0.85rem; margin-top:8px; min-height: 20px; font-weight:600;"></div>
     </header>
 
     <main>
         <div id="mod-wheel" class="module active">
             <h2 style="color:var(--text-main); margin-bottom:0;">عجلة الحظ</h2>
-            <p style="color:var(--text-light); font-size:0.9rem; margin-top:5px;">لفي العجلة ونفذي الحكم</p>
+            <p style="color:var(--text-light); font-size:0.9rem; margin-top:5px;">الدور على: <span class="current-player-name" style="color:var(--primary); font-weight:bold;">أحمد</span></p>
             
             <div class="wheel-container" id="wheel">
                 <div class="wheel-arrow"></div>
@@ -244,7 +251,7 @@
             <div id="wheel-result" style="min-height: 50px; font-size: 1.1rem; color: var(--primary); margin: 15px 0; font-weight:bold;">
                 اضغط للتدوير
             </div>
-            <button class="action-btn" onclick="spinWheel()">تدوير العجلة ✨</button>
+            <button class="action-btn" id="spin-btn" onclick="spinWheel()">تدوير العجلة ✨</button>
         </div>
 
         <div id="mod-cards" class="module">
@@ -257,8 +264,8 @@
             </div>
             
             <div class="card-display">
-                <div class="card-type" id="card-type">جاهز للعب؟</div>
-                <div class="card-text" id="card-text">اختر نوع الكارت واكتشف المطلوب!</div>
+                <div class="card-type" id="card-type">الدور على: <span class="current-player-name">أحمد</span></div>
+                <div class="card-text" id="card-text">اسحب كارت واكسب نقط!</div>
             </div>
 
             <div class="action-row">
@@ -276,7 +283,7 @@
                 <div id="die-action" class="die">فعل</div>
                 <div id="die-body" class="die">مكان</div>
             </div>
-            <button class="action-btn" onclick="rollDice()">ارمي النرد 🎲</button>
+            <button class="action-btn" id="dice-btn" onclick="rollDice()">ارمي النرد 🎲</button>
         </div>
     </main>
 
@@ -292,33 +299,21 @@
                 <div class="modal-title">دليل اللعبة 📖</div>
                 <button class="close-btn" onclick="closeHelp()">✕</button>
             </div>
-            
             <div class="rule-block">
-                <div class="rule-title">🎯 الهدف</div>
-                <div class="rule-desc">تجميع أكبر عدد من النقاط للفوز بجائزة "كارت الأمنية" في نهاية السهرة. اللعبة مصممة لكسر الروتين وزيادة القرب.</div>
+                <div class="rule-title">🔄 نظام الأدوار</div>
+                <div class="rule-desc">النقاط تضاف تلقائياً للشخص الذي عليه "الدور". يمكنك رؤية علامة "الدور عليك" تحت اسمك.</div>
             </div>
-
             <div class="rule-block">
-                <div class="rule-title">🎡 عجلة الحظ</div>
-                <div class="rule-desc">لعبة البداية. تحتوي على أوامر بسيطة ومرحة. <br><b>المكافأة:</b> 10 نقاط لكل لفة.</div>
+                <div class="rule-title">🎯 احتساب النقاط</div>
+                <div class="rule-desc">
+                    - العجلة والنرد: 10 نقاط.<br>
+                    - الكروت: حسب المستوى (15 / 30 / 50).<br>
+                    * ملحوظة: يمكنك الضغط على مربع النقاط لزيادته يدوياً إذا حدث خطأ.
+                </div>
             </div>
-
             <div class="rule-block">
-                <div class="rule-title">💌 كروت الصراحة والجرأة</div>
-                <div class="rule-desc">مقسمة لـ 3 مستويات. المستويات الأعلى تفتح بتجميع النقاط.<br>
-                - <b>المستوى الدافئ:</b> مفتوح للجميع (15 نقطة).<br>
-                - <b>المستوى الساخن:</b> يفتح عند 50 نقطة (30 نقطة).<br>
-                - <b>المستوى العميق:</b> يفتح عند 150 نقطة (50 نقطة).</div>
-            </div>
-
-            <div class="rule-block">
-                <div class="rule-title">🎲 نرد الحواس</div>
-                <div class="rule-desc">لعبة عشوائية لتركيب "فعل" مع "جزء من الجسم". نفذ الأمر بذكاء وإبداع.</div>
-            </div>
-
-            <div class="rule-block">
-                <div class="rule-title">🛡️ وضع الأمان (Safe Mode)</div>
-                <div class="rule-desc">الزر الموجود بالأعلى. عند تفعيله تختفي جميع الأسئلة والأحكام الجريئة جداً، وتصبح اللعبة مناسبة للأجواء الرومانسية الهادئة.</div>
+                <div class="rule-title">🔓 فتح المستويات</div>
+                <div class="rule-desc">المستويات تفتح بناءً على مجموع نقاطكم أنتم الاثنين (تعاوني).</div>
             </div>
         </div>
     </div>
@@ -387,16 +382,16 @@
             }
         };
 
-        // --- APP STATE ---
+        // --- STATE ---
         let state = {
             safeMode: false,
             score1: 0,
             score2: 0,
-            currentLevel: 1
+            currentLevel: 1,
+            currentPlayer: 1 // 1 for Ahmed, 2 for Lulu
         };
 
-        // --- FUNCTIONS ---
-
+        // --- LOGIC ---
         function toggleMode() {
             state.safeMode = document.getElementById('modeToggle').checked;
             updateUIForMode();
@@ -415,21 +410,47 @@
             btn.classList.add('active');
         }
 
-        function addScore(player) {
-            // For demo: adds to player 1 then toggles? 
-            // Better: Simple logic, whoever clicks plays, lets just increment p1 for now or allow toggle?
-            // Let's assume shared device, we just add points generally to the game "pool" or assign arbitrarily.
-            // Simplified: Add to P1 for now as "Current Player" concept needs more UI.
-            // Or better: Alternate turns logic could be complex, let's just stick to "General XP".
-            // Implementation: Click score to add manually.
-            // Automating:
-            state['score1'] += 10; // Basic increment
-            document.getElementById('score1').innerText = state.score1;
+        // --- SCORING & TURNS SYSTEM (FIXED) ---
+        function addScore(points) {
+            let player = state.currentPlayer;
+            state['score' + player] += points;
+            
+            // Animation for score
+            let scoreEl = document.getElementById('score' + player);
+            scoreEl.innerText = state['score' + player];
+            scoreEl.style.transform = "scale(1.5)";
+            setTimeout(()=> scoreEl.style.transform = "scale(1)", 200);
+
             checkUnlocks();
         }
 
+        function manualAdd(player) {
+            // Allows fixing score by clicking
+            state['score' + player] += 5;
+            document.getElementById('score' + player).innerText = state['score' + player];
+            checkUnlocks();
+        }
+
+        function switchTurn() {
+            state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
+            updateTurnUI();
+        }
+
+        function updateTurnUI() {
+            // Remove active class from both
+            document.getElementById('box-p1').classList.remove('active-turn');
+            document.getElementById('box-p2').classList.remove('active-turn');
+            
+            // Add to current
+            document.getElementById('box-p' + state.currentPlayer).classList.add('active-turn');
+
+            // Update names in modules
+            let name = state.currentPlayer === 1 ? "أحمد" : "لولو";
+            document.querySelectorAll('.current-player-name').forEach(el => el.innerText = name);
+        }
+
         function checkUnlocks() {
-            let total = state.score1; // + state.score2;
+            let total = state.score1 + state.score2;
             let msg = document.getElementById('reward-msg');
             let lvl2Btn = document.getElementById('lvl2-btn');
             let lvl3Btn = document.getElementById('lvl3-btn');
@@ -443,24 +464,51 @@
             }
         }
 
-        // Wheel
-        let currentRotation = 0;
+        // --- GAME MODULES ---
+        let isSpinning = false;
         function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('spin-btn').disabled = true;
+
             const resBox = document.getElementById('wheel-result');
             resBox.innerText = "...";
+            
             let pool = data.wheel;
             if (state.safeMode) pool = pool.filter(i => i.safe);
             let selected = pool[Math.floor(Math.random() * pool.length)];
-            let randomDeg = Math.floor(500 + Math.random() * 2000); 
-            currentRotation += randomDeg;
-            document.getElementById('wheel').style.transform = `rotate(${currentRotation}deg)`;
+            
+            let randomDeg = Math.floor(1000 + Math.random() * 2000); 
+            let wheel = document.getElementById('wheel');
+            let currentRotation = getRotation(wheel); 
+            wheel.style.transform = `rotate(${currentRotation + randomDeg}deg)`;
+
             setTimeout(() => {
                 resBox.innerText = selected.t;
-                addScore(1);
+                addScore(10);
+                setTimeout(switchTurn, 1000); // Switch turn after 1s
+                isSpinning = false;
+                document.getElementById('spin-btn').disabled = false;
             }, 4000);
         }
 
-        // Cards
+        function getRotation(el) {
+            // Helper to keep rotation cumulative
+            var st = window.getComputedStyle(el, null);
+            var tm = st.getPropertyValue("-webkit-transform") ||
+                     st.getPropertyValue("-moz-transform") ||
+                     st.getPropertyValue("-ms-transform") ||
+                     st.getPropertyValue("-o-transform") ||
+                     st.getPropertyValue("transform") ||
+                     "none";
+            if (tm != "none") {
+                var values = tm.split('(')[1].split(')')[0].split(',');
+                var angle = Math.round(Math.atan2(values[1],values[0]) * (180/Math.PI));
+                return (angle < 0 ? angle + 360 : angle);
+            }
+            return 0;
+        }
+
         function setLevel(lvl) {
             let btn = document.getElementById('lvl' + lvl + '-btn');
             if (btn.classList.contains('locked') && !state.safeMode) {
@@ -476,41 +524,60 @@
             let lvlKey = 'lvl' + state.currentLevel;
             let pool = data[lvlKey][type];
             let card = pool[Math.floor(Math.random() * pool.length)];
-            document.getElementById('card-type').innerText = type === 'truth' ? 'سؤال صراحة' : 'حكم جرأة';
-            document.getElementById('card-text').innerText = card;
-            addScore(1);
+            
+            // Animation effect
+            let textDiv = document.getElementById('card-text');
+            textDiv.style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('card-type').innerText = type === 'truth' ? 'سؤال صراحة' : 'حكم جرأة';
+                textDiv.innerText = card;
+                textDiv.style.opacity = 1;
+                
+                // Scoring
+                let points = state.currentLevel === 1 ? 15 : (state.currentLevel === 2 ? 30 : 50);
+                addScore(points);
+                switchTurn();
+            }, 300);
         }
 
         function useJoker() {
-            document.getElementById('card-text').innerText = "🃏 كارت الجوكر! \n تم العفو عنكِ. \n (بوسة + حكم جديد)";
+            document.getElementById('card-text').innerText = "🃏 كارت الجوكر! \n تم العفو عنك. \n (بوسة + حكم جديد)";
         }
 
-        // Dice
         function rollDice() {
+            let btn = document.getElementById('dice-btn');
+            btn.disabled = true;
             let dieA = document.getElementById('die-action');
             let dieB = document.getElementById('die-body');
+            
             dieA.classList.add('shake'); dieB.classList.add('shake');
+            
             setTimeout(() => {
                 dieA.classList.remove('shake'); dieB.classList.remove('shake');
+                
                 let safeFilterActions = ["عض", "الحس", "حك", "اعصر"];
                 let safeFilterParts = ["العانة", "الحلمة", "الفخذ", "المؤخرة"];
                 let actions = data.dice.actions;
                 let parts = data.dice.parts;
+                
                 if (state.safeMode) {
                     actions = actions.filter(a => !safeFilterActions.some(bad => a.includes(bad)));
                     parts = parts.filter(p => !safeFilterParts.some(bad => p.includes(bad)));
                 }
+                
                 dieA.innerText = actions[Math.floor(Math.random() * actions.length)];
                 dieB.innerText = parts[Math.floor(Math.random() * parts.length)];
-                addScore(1);
+                
+                addScore(10);
+                switchTurn();
+                btn.disabled = false;
             }, 500);
         }
 
-        // Help Modal
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
 
-        // Service Worker
+        // SW
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
         // Init
